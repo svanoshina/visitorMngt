@@ -29,21 +29,20 @@ class VisitorManagementServiceImpl : VisitorManagementService {
                 ?: throw IllegalArgumentException("Visitor $visitorId has to be already registered")
 
         synchronized(visitor) {
-            checkVisitor(visitor, leftAt)
-            if (visitor.dateRanges.last().to == null) {
+            if (checkVisitor(visitor, leftAt) && visitor.dateRanges.last().to == null) {
                 visitor.dateRanges.last().to = leftAt
             }
         }
     }
 
-    private fun checkVisitor(visitor: Visitor, leftAt: LocalDate): Visitor {
+    private fun checkVisitor(visitor: Visitor, leftAt: LocalDate): Boolean {
         if (visitor.dateRanges.isEmpty()) {
             throw IllegalArgumentException("Visitor ${visitor.visitorId} never enters to library")
         }
         if (visitor.dateRanges.last().from > leftAt) {
             throw IllegalArgumentException("Incorrect input date $leftAt")
         }
-        return visitor
+        return true
     }
 
     /**
